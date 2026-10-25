@@ -4,17 +4,11 @@ from utils.retriever import create_retriever
 from utils.config import Config
 from utils.state import GraphState
 
+from colors import Colors
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-class Colors:
-    RESET = "\033[0m" 
-    HEADER = "\033[93m" # yellow
-    DOC_ID = "\033[95m" # magenta
-    SCORE = "\033[92m"  # green
-    TITLE = "\033[96m"  # cyan
-    ERROR = "\033[91m"  # red
 
 def format_output(result: GraphState):
     """
@@ -25,10 +19,12 @@ def format_output(result: GraphState):
     print(f"{Colors.HEADER}\n================ Retrieved Documents ================{Colors.RESET}")
     for idx, doc in enumerate(result.get("retrieved_documents", []), start=1):
         print(
-            f"[{idx}] {Colors.DOC_ID}docid={doc.get('docid')}{Colors.RESET} "
+            f"{Colors.HEADER}[{idx}]{Colors.RESET} {Colors.DOC_ID}docid={doc.get('docid')}{Colors.RESET} "
             f"{Colors.SCORE}BM25 score={doc.get('score')}{Colors.RESET} "
             f"{Colors.TITLE}title={doc.get('title') or 'Unknown'}{Colors.RESET}"
         )
+        # This helps the user understand which subquery retrieved the document
+        print(f"  {Colors.SUBQUERY}Retrieved for SUBQUERY: {doc.get('subquery', 'Unknown')}{Colors.RESET}")
         print(doc.get("text", ""))
 
 def main():
